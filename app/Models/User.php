@@ -18,6 +18,17 @@ class User extends Authenticatable
         return $this->hasMany(Post::class, 'user_id');
     }
 
+    public function likes()
+    {
+        return $this->hasMany(like::class);
+        //"One-to-Many" relationship between User and Like
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(comment::class);
+        //"One-to-Many" relationship between User and Like
+    }
     /**
      * The attributes that are mass assignable.
      *
