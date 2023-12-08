@@ -23,4 +23,15 @@ class Post extends Model
         return $this->hasMany(comment::class);
         //"One-to-Many" relationship between Post and Like
     }
+
+    protected $fillable = [
+        'user_id',
+        'content',
+        'post_type',
+        'location',
+        'privacy',
+    ];
+
+
+
 }

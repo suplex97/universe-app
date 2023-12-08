@@ -14,8 +14,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// routes/web.php
+
+use App\Http\Controllers\PostController;
+
+Route::get('/t', [PostController::class, 'index']);
+Route::get('/create-post', [PostController::class, 'create']);
+Route::post('/store-post', [PostController::class, 'store'])->name('post.store');
+
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
+});
+
+Route::get('/home', function () {
+    return view('welcome ');
 });
 
 Route::get('/dashboard', function () {
