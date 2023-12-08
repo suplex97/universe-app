@@ -18,12 +18,12 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PostController;
 
-Route::get('/t', [PostController::class, 'index']);
+Route::get('/', [PostController::class, 'index']);
 Route::get('/create-post', [PostController::class, 'create']);
 Route::post('/store-post', [PostController::class, 'store'])->name('post.store');
 
 
-Route::get('/', function () {
+Route::get('/t', function () {
     return view('home');
 });
 

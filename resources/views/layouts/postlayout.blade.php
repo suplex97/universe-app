@@ -15,7 +15,7 @@
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid start-100">
-          <form class="d-flex" role="search">
+          <form class="d-flex" role="search" style="margin-bottom: 0px;">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
@@ -23,7 +23,7 @@
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse position-absolute top-50 end-0 translate-middle-y" id="navbarSupportedContent">
+          <div class="collapse navbar-collapse position-absolute top-50 end-0 translate-middle-y " id="navbarSupportedContent" style="margin-right: 15px;">
             <ul class="navbar-nav me-auto mb-4 mb-lg-0">
               <li class="nav-item ">
               
