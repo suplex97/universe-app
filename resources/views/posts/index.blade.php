@@ -78,10 +78,11 @@
 
 
 
-<div class="container col-md-8">
-    <h2>Posts</h2>
+<div class="container col-md-3">
+    <h2 class="mb-4">Posts</h2>
+
     @foreach($posts as $post)
-        <div class="card mb-3">
+        <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title">
                     @if($post->user)
@@ -96,17 +97,17 @@
                         <strong>Content:</strong> {{ $post->content }}
                     @elseif($post->post_type === 'photo')
                         @if($post->image)
-                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid">
+                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
                         @endif
                     @elseif($post->post_type === 'link')
                         @if($post->link)
-                        <strong>Link:</strong> <a href="{{ $post->link }}" target="_blank">{{ $post->link }}</a>
+                            <strong>Link:</strong> <a href="{{ $post->link }}" target="_blank">{{ $post->link }}</a>
                         @else
                             <strong>Link:</strong> (No link provided)
                         @endif
                     @elseif($post->post_type === 'image-text')
                         @if($post->image)
-                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid">
+                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
                         @endif
                         <strong>Content:</strong> {{ $post->content }}
                     @endif
@@ -114,6 +115,20 @@
                 <p class="card-text">
                     <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
                 </p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Add icons for comment, like, and share -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary">
+                            <i class="bi bi-chat"></i> Comment
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary">
+                            <i class="bi bi-heart"></i> Like
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary">
+                            <i class="bi bi-share"></i> Share
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     @endforeach
