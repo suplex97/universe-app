@@ -26,23 +26,70 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-       // Validate the request
-       $request->validate([
-        'content' => 'required|max:255',
+// app/Http/Controllers/PostController.php
+
+public function store(Request $request)
+{
+    // Validate the request
+    $request->validate([
+        'content'   => 'nullable|max:255',
+        'image'     => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        'link'      => 'url|nullable',
     ]);
 
-    if (auth()->check()) {
-        // Valid user, proceed with creating a post
-        auth()->user()->posts()->create([
-            'content' => $request->input('content'),
-            // Add other fields as needed
-        ]);
+    // Handle file upload if an image is provided
+    $imagePath = null;
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('images', 'public');
+    }
+   
 
-        return redirect('/');
+    // Automatically determine post type based on content
+    $postType = $this->determinePostType($request->input('content'), $imagePath, $request->input('link'));
+
+    // Explicitly check and set 'content' value
+    $content = $request->input('content');
+    if ($content === null) {
+        $content = ''; // Set default value if 'content' is null
     }
+
+    // Create a new post
+    auth()->user()->posts()->create([
+        'content'   => $content,
+        'image'     => $imagePath,
+        'link'      => $request->input('link'),
+        'post_type' => $postType,
+        // Add other fields as needed
+    ]);
+
+    return redirect('/');
+}
+
+
+/**
+ * Determine the post type based on content, image, and link.
+ *
+ * @param string|null $content
+ * @param string|null $imagePath
+ * @param string|null $link
+ * @return string
+ */
+private function determinePostType($content, $imagePath, $link)
+{
+    if (!empty($content) && !empty($imagePath)) {
+        return 'image-text';
+    } elseif (!empty($content)) {
+        return 'text';
+    } elseif (!empty($imagePath)) {
+        return 'photo';
+    } elseif (!empty($link)) {
+        return 'link';
+    } else {
+        // Default to 'text' if no content, image, or link
+        return 'text';
     }
+}
+
     /**
      * Display the specified resource.
      */

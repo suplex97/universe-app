@@ -23,6 +23,7 @@ Route::get('/create-post', [PostController::class, 'create']);
 Route::post('/store-post', [PostController::class, 'store'])->name('post.store');
 
 
+
 Route::get('/t', function () {
     return view('home');
 });

@@ -16,7 +16,8 @@ return new class extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->text('content');
-            $table->enum('post_type', ['text', 'photo', 'video', 'link']);
+            $table->enum('post_type', ['text', 'photo', 'video', 'link', 'image-text']);
+            $table->string('image')->nullable();
             $table->string('location')->nullable();
             $table->enum('privacy', ['public', 'friends', 'friends_of_friends', 'custom']);
             $table->timestamps();
