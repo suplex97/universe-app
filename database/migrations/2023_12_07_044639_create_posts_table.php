@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('content');
             $table->enum('post_type', ['text', 'photo', 'video', 'link', 'image-text']);
             $table->string('image')->nullable();
+            $table->string('link')->nullable(); 
             $table->string('location')->nullable();
             $table->enum('privacy', ['public', 'friends', 'friends_of_friends', 'custom']);
             $table->timestamps();

@@ -3,6 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+
+// Display all registered controllers
+
+//dd(app('router')->getRoutes()->getControllers());
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,12 +26,11 @@ use App\Http\Controllers\PostController;
 Route::get('/', [PostController::class, 'index']);
 Route::get('/create-post', [PostController::class, 'create']);
 Route::post('/store-post', [PostController::class, 'store'])->name('post.store');
+Route::get('/profile/{user}', [ProfileController::class, 'index'])->name('user.profile')->middleware('auth');
 
-
-
-Route::get('/t', function () {
-    return view('home');
-});
+Route::get('/post/{post}/edit', [ProfileController::class, 'edit'])->name('post.edit');
+Route::patch('/post/{post}', [ProfileController::class, 'update'])->name('post.update');
+Route::delete('/post/{post}', [ProfileController::class, 'destroy'])->name('post.destroy');
 
 Route::get('/home', function () {
     return view('welcome ');

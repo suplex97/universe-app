@@ -76,13 +76,13 @@ public function store(Request $request)
  */
 private function determinePostType($content, $imagePath, $link)
 {
-    if (!empty($content) && !empty($imagePath)) {
+    if (!empty($content) && !empty($imagePath) && empty($link)) {
         return 'image-text';
-    } elseif (!empty($content)) {
+    } elseif (!empty($content) && empty($imagePath) && empty($link)) {
         return 'text';
-    } elseif (!empty($imagePath)) {
+    } elseif (empty($content) && !empty($imagePath) && empty($link)) {
         return 'photo';
-    } elseif (!empty($link)) {
+    } elseif (empty($content) && empty($imagePath) && !empty($link)) {
         return 'link';
     } else {
         // Default to 'text' if no content, image, or link
@@ -95,7 +95,7 @@ private function determinePostType($content, $imagePath, $link)
      */
     public function show(string $id)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -111,7 +111,13 @@ private function determinePostType($content, $imagePath, $link)
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validation logic
+    $post->update([
+        'content' => $request->input('content'),
+        // Update other fields as needed
+    ]);
+
+    return redirect()->route('user.profile', ['user' => auth()->user()]);
     }
 
     /**
@@ -119,6 +125,7 @@ private function determinePostType($content, $imagePath, $link)
      */
     public function destroy(string $id)
     {
-        //
+        $post->delete();
+    return redirect()->route('user.profile', ['user' => auth()->user()]);
     }
 }

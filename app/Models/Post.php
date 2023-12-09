@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
-    Public function Post(){
+    Public function User(){
     return $this->belongsTo(User::class);
     }
 
@@ -28,6 +28,8 @@ class Post extends Model
         'user_id',
         'content',
         'post_type',
+        'image',
+        'link',
         'location',
         'privacy',
     ];

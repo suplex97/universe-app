@@ -78,27 +78,53 @@
 
 
 
-<div class="container col-md-4">
+<div class="container col-md-8">
     <h2>Posts</h2>
     @foreach($posts as $post)
         <div class="card mb-3">
             <div class="card-body">
-                @if($post->post_type === 'text')
-                    {{ $post->content }}
-                @elseif($post->post_type === 'photo')
-                    <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image">
-                @elseif($post->post_type === 'link')
-                    <a href="{{ $post->link }}" target="_blank">{{ $post->link }}</a>
-                    @elseif($post->post_type === 'image-text')
-                    @if($post->image)
-                        <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image">
+                <h5 class="card-title">
+                    @if($post->user)
+                        <a href="{{ route('user.profile', ['user' => $post->user]) }}">{{ $post->user->name }}</a>
+                    @else
+                        User Not Found
+                        @php dd($post->toArray()) @endphp
                     @endif
-                    <p>{{ $post->content }}</p>
-                @endif
+                </h5>
+                <p class="card-text">
+                    @if($post->post_type === 'text')
+                        <strong>Content:</strong> {{ $post->content }}
+                    @elseif($post->post_type === 'photo')
+                        @if($post->image)
+                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid">
+                        @endif
+                    @elseif($post->post_type === 'link')
+                        @if($post->link)
+                        <strong>Link:</strong> <a href="{{ $post->link }}" target="_blank">{{ $post->link }}</a>
+                        @else
+                            <strong>Link:</strong> (No link provided)
+                        @endif
+                    @elseif($post->post_type === 'image-text')
+                        @if($post->image)
+                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid">
+                        @endif
+                        <strong>Content:</strong> {{ $post->content }}
+                    @endif
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
+                </p>
             </div>
         </div>
     @endforeach
 </div>
+
+
+
+
+
+
+
 
 
 @endsection
