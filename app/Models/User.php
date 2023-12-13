@@ -11,7 +11,10 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+    
+    public function roles() {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
 
     public function posts()
     {

@@ -39,6 +39,8 @@ Route::post('/comment/{post}', [CommentController::class, 'store'])->name('comme
 Route::get('/load-comments/{post}', [CommentController::class, 'loadComments']);
 
 
+
+
 Route::get('/home', function () {
     return view('welcome ');
 });
