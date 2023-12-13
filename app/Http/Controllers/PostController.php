@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\like;
 class PostController extends Controller
 {
     /**
@@ -12,6 +13,8 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::latest()->get();
+        return view('posts.index', compact('posts'));
+        $posts = Post::with('likes')->get(); // Eager load likes
         return view('posts.index', compact('posts'));
     }
 
@@ -128,4 +131,31 @@ private function determinePostType($content, $imagePath, $link)
         $post->delete();
     return redirect()->route('user.profile', ['user' => auth()->user()]);
     }
+
+
+
+    public function like(Request $request, Post $post)
+    {
+        $user = auth()->user(); // Get the authenticated user
+        $like = like::where('post_id', $post->id)->where('user_id', $user->id)->first();
+        
+        if ($like) {
+            // User already liked the post, so remove the like
+            $like->delete();
+        } else {
+            // User has not liked the post, so add a like
+            $like = new like();
+            $like->user_id = $user->id;
+            $like->post_id = $post->id;
+            $like->reaction = 'like'; // or any default value
+            $like->save();
+        }
+
+            $likesCount = 0;
+        if ($post->likes) {
+            $likesCount = $post->likes->count();
+        }
+
+        return response()->json(['success' => true, 'likes' => $likesCount]);
+        }
 }

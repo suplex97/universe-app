@@ -12,10 +12,9 @@ class Post extends Model
     return $this->belongsTo(User::class);
     }
 
-    public function like()
+    public function likes()
     {
-        return $this->hasOne(Like::class);
-        //"One-to-One" relationship between Post and Like
+        return $this->hasMany(like::class, 'post_id');
     }
 
     public function comment()

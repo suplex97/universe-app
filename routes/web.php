@@ -31,6 +31,8 @@ Route::get('/profile/{user}', [ProfileController::class, 'index'])->name('user.p
 Route::get('/post/{post}/edit', [ProfileController::class, 'edit'])->name('post.edit');
 Route::patch('/post/{post}', [ProfileController::class, 'update'])->name('post.update');
 Route::delete('/post/{post}', [ProfileController::class, 'destroy'])->name('post.destroy');
+Route::post('/like/{post}', [PostController::class, 'like'])->name('post.like');
+Route::post('/comment/{post}', 'PostController@comment')->name('post.comment');
 
 Route::get('/home', function () {
     return view('welcome ');

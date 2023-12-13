@@ -78,61 +78,110 @@
 
 
 
-<div class="container col-md-3">
-    <h2 class="mb-4">Posts</h2>
+    <div class="container col-md-4">
+        <h2 class="mb-4">Posts</h2>
 
-    @foreach($posts as $post)
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    @if($post->user)
-                        <a href="{{ route('user.profile', ['user' => $post->user]) }}">{{ $post->user->name }}</a>
-                    @else
-                        User Not Found
-                        @php dd($post->toArray()) @endphp
-                    @endif
-                </h5>
-                <p class="card-text">
-                    @if($post->post_type === 'text')
-                        <strong>Content:</strong> {{ $post->content }}
-                    @elseif($post->post_type === 'photo')
-                        @if($post->image)
-                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
-                        @endif
-                    @elseif($post->post_type === 'link')
-                        @if($post->link)
-                            <strong>Link:</strong> <a href="{{ $post->link }}" target="_blank">{{ $post->link }}</a>
+        @foreach($posts as $post)
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        @if($post->user)
+                            <a href="{{ route('user.profile', ['user' => $post->user]) }}">{{ $post->user->name }}</a>
                         @else
-                            <strong>Link:</strong> (No link provided)
+                            User Not Found
+                            @php dd($post->toArray()) @endphp
                         @endif
-                    @elseif($post->post_type === 'image-text')
-                        @if($post->image)
-                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
+                    </h5>
+                    <p class="card-text">
+                        @if($post->post_type === 'text')
+                            <strong>Content:</strong> {{ $post->content }}
+                        @elseif($post->post_type === 'photo')
+                            @if($post->image)
+                                <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
+                            @endif
+                        @elseif($post->post_type === 'link')
+                            @if($post->link)
+                                <strong>Link:</strong> <a href="{{ $post->link }}" target="_blank">{{ $post->link }}</a>
+                            @else
+                                <strong>Link:</strong> (No link provided)
+                            @endif
+                        @elseif($post->post_type === 'image-text')
+                            @if($post->image)
+                                <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
+                            @endif
+                            <strong>Content:</strong> {{ $post->content }}
                         @endif
-                        <strong>Content:</strong> {{ $post->content }}
-                    @endif
-                </p>
-                <p class="card-text">
-                    <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
-                </p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <!-- Add icons for comment, like, and share -->
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-outline-secondary">
-                            <i class="bi bi-chat"></i> Comment
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary">
-                            <i class="bi bi-heart"></i> Like
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary">
-                            <i class="bi bi-share"></i> Share
-                        </button>
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- Add icons for comment, like, and share -->
+                        <div class="btn-group">
+                            @php
+                            $isLikedByUser = $post->likes->contains('user_id', auth()->id());
+                            @endphp
+                            <button type="button" class="btn {{ $isLikedByUser ? 'btn-primary' : 'btn-outline-secondary' }} like-btn" onclick="likePost({{ $post->id }}, this)">
+                                <i class="bi bi-heart"></i> Like
+                            </button>
+                            
+                            <button type="button" class="btn btn-outline-secondary comment-btn" data-bs-toggle="modal" data-bs-target="#commentModal" data-post-id="{{ $post->id }}">
+                                <i class="bi bi-chat"></i> Comment
+                            </button>
+                            
+                        </div>                 
+                        <span id="likes-count-{{ $post->id }}">
+                            likes: {{ $post->likes ? $post->likes->count() : 'No likes relationship' }}
+                        </span>
                     </div>
                 </div>
             </div>
+        @endforeach
+    </div>
+
+    <div class="modal" tabindex="-1" id="commentModal">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Comment</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Write a comment..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Post</button>
+                </div>
+            </div>
         </div>
-    @endforeach
-</div>
+        </div>
+    </div>
+   
+  <script> //AJAX to handle the like functionality
+        function likePost(postId, buttonElement) {
+        fetch('/like/' + postId, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ postId: postId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('likes-count-' + postId).innerText = 'Likes: ' + data.likes;
+                buttonElement.classList.toggle('btn-primary');
+                buttonElement.classList.toggle('btn-outline-secondary');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    </script>
+    
 
 
 
