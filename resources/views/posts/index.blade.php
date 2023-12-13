@@ -127,7 +127,7 @@
                             
                             <button type="button" class="btn btn-outline-secondary comment-btn" data-bs-toggle="modal" data-bs-target="#commentModal" data-post-id="{{ $post->id }}">
                                 <i class="bi bi-chat"></i> Comment
-                            </button>
+                            </button>                            
                             
                         </div>                 
                         <span id="likes-count-{{ $post->id }}">
@@ -147,12 +147,14 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            <p>Modal body text goes here.</p>
-            </div>
+                <div id="comments-section">
+                    <!-- Comments will be dynamically added here -->
+                </div>
             <div class="modal-footer">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Write a comment..." aria-label="Recipient's username" aria-describedby="button-addon2">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Post</button>
+                    <input type="text" id="comment-input" class="form-control" placeholder="Write a comment...">
+                    <button class="btn btn-outline-secondary" type="button" id="post-comment-btn">Post</button>
+
                 </div>
             </div>
         </div>
@@ -181,6 +183,73 @@
     }
 
     </script>
+
+        <script> // Proceed with AJAX request to submit comment
+            document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.comment-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    var postId = this.getAttribute('data-post-id');
+
+                    // Update the comment button in the modal for the current post
+                    document.getElementById('post-comment-btn').onclick = function() {
+                        postComment(postId);
+                    };
+
+                    // Clear existing comments
+                    var commentSection = document.getElementById('comments-section');
+                    commentSection.innerHTML = '';
+
+                    // AJAX request to load comments for the selected post
+                    fetch('/load-comments/' + postId)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.comments.forEach(comment => {
+                            var commentDiv = document.createElement('div');
+                            commentDiv.innerHTML = '<strong><a href="/user/profile/' + comment.userId + '">' + comment.userName + '</a></strong>: ' + comment.text;
+                            commentSection.appendChild(commentDiv);
+                        });
+                    })
+                    .catch(error => console.error('Error loading comments:', error));
+                });
+            });
+        });
+
+
+
+            
+            
+            function postComment(postId) {
+                var commentInput = document.getElementById('comment-input');
+                var commentText = commentInput.value;
+            
+                if (commentText.length > 200) {
+                    alert("Comments can't be longer than 200 characters. Try shortening your comment.");
+                    return;
+                }
+            
+                // Proceed with AJAX request to submit comment
+                // ...
+                fetch('/comment/' + postId, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ comment: commentText })
+                })
+                .then(response => response.json())
+                .then(data => {
+                if (data.success) {
+                    var commentSection = document.getElementById('comments-section');
+                    var newComment = document.createElement('div');
+                    newComment.innerHTML = '<strong><a href="/user/profile/' + data.userId + '">' + data.userName + '</a></strong>: ' + data.commentText;
+                    commentSection.appendChild(newComment);
+                    commentInput.value = ''; // Clear the input field
+                }
+            })
+            .catch(error => console.error('Error:', error));
+            }
+        </script>
     
 
 

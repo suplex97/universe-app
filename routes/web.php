@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -32,7 +33,11 @@ Route::get('/post/{post}/edit', [ProfileController::class, 'edit'])->name('post.
 Route::patch('/post/{post}', [ProfileController::class, 'update'])->name('post.update');
 Route::delete('/post/{post}', [ProfileController::class, 'destroy'])->name('post.destroy');
 Route::post('/like/{post}', [PostController::class, 'like'])->name('post.like');
-Route::post('/comment/{post}', 'PostController@comment')->name('post.comment');
+
+use App\Http\Controllers\CommentController;
+Route::post('/comment/{post}', [CommentController::class, 'store'])->name('comment.store');
+Route::get('/load-comments/{post}', [CommentController::class, 'loadComments']);
+
 
 Route::get('/home', function () {
     return view('welcome ');

@@ -17,7 +17,7 @@ class Post extends Model
         return $this->hasMany(like::class, 'post_id');
     }
 
-    public function comment()
+    public function comments()
     {
         return $this->hasMany(comment::class);
         //"One-to-Many" relationship between Post and Like
