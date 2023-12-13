@@ -12,8 +12,19 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     
+    
     public function roles() {
-        return $this->belongsToMany(Role::class, 'user_roles');
+        return $this->belongsToMany(role::class, 'userroles');
+    }
+
+    /**
+     * Check if the user is an admin.
+     *
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->roles()->where('name', 'admin')->exists();
     }
 
     public function posts()

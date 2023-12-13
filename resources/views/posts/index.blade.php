@@ -189,32 +189,72 @@
             document.querySelectorAll('.comment-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     var postId = this.getAttribute('data-post-id');
-
+                    var commentSection = document.getElementById('comments-section');
+                    commentSection.innerHTML = ''; // Clear existing comments
                     // Update the comment button in the modal for the current post
                     document.getElementById('post-comment-btn').onclick = function() {
                         postComment(postId);
                     };
 
-                    // Clear existing comments
-                    var commentSection = document.getElementById('comments-section');
-                    commentSection.innerHTML = '';
+                    
 
                     // AJAX request to load comments for the selected post
                     fetch('/load-comments/' + postId)
                     .then(response => response.json())
                     .then(data => {
-                        data.comments.forEach(comment => {
-                            var commentDiv = document.createElement('div');
-                            commentDiv.innerHTML = '<strong><a href="/user/profile/' + comment.userId + '">' + comment.userName + '</a></strong>: ' + comment.text;
-                            commentSection.appendChild(commentDiv);
-                        });
-                    })
+                            data.comments.forEach(comment => {
+                                console.log('Comment ID:', comment.id); 
+                                var commentDiv = document.createElement('div');
+                                commentDiv.id = 'comment-' + comment.id; // Assigning ID
+                                commentDiv.classList.add('comment');
+                                //var commentHtml = `<p>${comment.text}</p>`;
+                                // Include user name and profile link in the comment HTML
+                                var commentHtml = `<p><strong><a href="/user/profile/${comment.userId}">${comment.userName}</a></strong>: ${comment.text}</p>`;
+
+                                // Check if the current user is an admin
+                                if (isAdmin) { // 'isAdmin' should be a boolean variable set in your frontend
+                                    commentHtml += `
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                ...
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item" href="#" onclick="editComment(${comment.id}, '${comment.text}')">Edit</a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="confirmDelete(${comment.id})">Delete</a></li>
+                                            </ul>
+                                        </div>`;
+                                }
+
+                                commentDiv.innerHTML = commentHtml;
+                                document.getElementById('comments-section').appendChild(commentDiv);
+                            });
+                        })
+
                     .catch(error => console.error('Error loading comments:', error));
                 });
             });
         });
 
+                 function createCommentHTML(comment) {
+    var commentHtml = `<div id="comment-${comment.id}" class="comment">
+        <p><strong><a href="/user/profile/${comment.userId}">${comment.userName}</a></strong>: ${comment.text}</p>`;
 
+    if (isAdmin) {
+        commentHtml += `
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    ...
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#" onclick="editComment(${comment.id}, '${comment.text}')">Edit</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="confirmDelete(${comment.id})">Delete</a></li>
+                </ul>
+            </div>`;
+    }
+
+    commentHtml += `</div>`;
+    return commentHtml;
+}
 
             
             
@@ -249,7 +289,77 @@
             })
             .catch(error => console.error('Error:', error));
             }
-        </script>
+             
+            function editComment(commentId, commentText) {
+                            var commentDiv = document.getElementById('comment-' + commentId);
+                if (commentDiv) {
+                    var originalCommentHtml = commentDiv.innerHTML;
+
+                    var editHtml = `
+                        <div class="input-group mb-3">
+                            <input type="text" id="edit-input-${commentId}" class="form-control" value="${commentText}">
+                            <button class="btn btn-primary" onclick="submitEdit(${commentId}, \`${originalCommentHtml}\`)">Save</button>
+                            <button class="btn btn-secondary" onclick="cancelEdit(${commentId}, \`${originalCommentHtml}\`)">Cancel</button>
+                        </div>
+                    `;
+
+                    commentDiv.innerHTML = editHtml;
+                }
+            }
+
+            function submitEdit(commentId) {
+                            var editedText = document.getElementById('edit-input-' + commentId).value;
+
+            // AJAX call to update the comment on the server
+            // On success, revert back to original comment display with updated text
+            // For now, let's revert back without waiting for AJAX response
+            var commentDiv = document.getElementById('comment-' + commentId);
+            if (commentDiv) {
+                commentDiv.innerHTML = originalCommentHtml.replace(commentText, editedText);
+            }
+            }
+
+            function cancelEdit(commentId, originalText) {
+                // Replace the input field back with the original comment text
+                            var commentDiv = document.getElementById('comment-' + commentId);
+                if (commentDiv) {
+                    commentDiv.innerHTML = originalCommentHtml;
+                }
+            }
+
+
+            function confirmDelete(commentId) {
+                console.log('Deleting comment with ID:', commentId); // Debugging
+                if (confirm('Are you sure you want to delete this comment?')) {
+                    // AJAX call to delete the comment
+                    fetch('/delete-comment/' + commentId, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            var commentDiv = document.getElementById('comment-' + commentId);
+                            if (commentDiv) {
+                                commentDiv.remove();
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            }
+
+
+
+      </script>
+
+<script>
+    var isAdmin = @json(auth()->user()->isAdmin()); // Or the equivalent check for admin role
+</script>
+
     
 
 

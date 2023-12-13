@@ -64,13 +64,15 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        // Check if the logged-in user is the owner of the comment
-        if (auth()->id() !== $comment->user_id) {
+            // Check if the user is an admin
+        if (!auth()->user()->isAdmin()) { // Assuming isAdmin() method checks the user's role
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        // Perform update operation
-        // ...
+        // Update the comment
+        $comment->update(['comment_text' => $request->input('comment_text')]);
+
+        return response()->json(['success' => true, 'message' => 'Comment updated']);
     }
 
     /**
@@ -78,18 +80,18 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        // Check if the logged-in user is the owner of the comment
-        if (auth()->id() !== $comment->user_id) {
+        if (!auth()->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-
-        // Perform delete operation
-        // ...
+    
+        $comment->delete();
+        return response()->json(['success' => true, 'message' => 'Comment deleted']);
     }
 
     public function loadComments(Post $post) {
         $comments = $post->comments()->with('user')->get()->map(function ($comment) {
             return [
+                'id' => $comment->id, // Include the comment ID
                 'text' => $comment->comment_text,
                 'userName' => $comment->user->name,
                 'userId' => $comment->user->id,

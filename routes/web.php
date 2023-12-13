@@ -37,6 +37,8 @@ Route::post('/like/{post}', [PostController::class, 'like'])->name('post.like');
 use App\Http\Controllers\CommentController;
 Route::post('/comment/{post}', [CommentController::class, 'store'])->name('comment.store');
 Route::get('/load-comments/{post}', [CommentController::class, 'loadComments']);
+Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
+Route::delete('/delete-comment/{comment}', [CommentController::class, 'destroy']);
 
 
 
