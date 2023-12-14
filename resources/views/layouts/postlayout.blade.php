@@ -12,7 +12,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
+  
 
+      
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid start-100">
           <form class="d-flex" role="search" style="margin-bottom: 0px;">
@@ -43,6 +45,30 @@
                   </span>
           </div>
         </a>
+          </li>
+          @auth
+    @php
+    $notifications = \App\Models\notification::where('user_id', auth()->id())
+                           ->latest()
+                           ->take(5)
+                           ->get();
+    @endphp
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Notifications
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          @foreach($notifications as $notification)
+    <a class="dropdown-item" href="#" onclick="markNotificationAsRead({{ $notification->id }})">
+        {{ $notification->data['message'] ?? 'You have a new notification.' }}
+    </a>
+@endforeach
+        </div>
+    </li>
+@endauth
+
+          
               <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       {{ Auth::user()->name }}
@@ -65,6 +91,8 @@
                 
         </li>
             
+
+
           </ul>
             
           </div>
@@ -73,6 +101,33 @@
 
 @yield('content')
 
+
+<script>
+
+function markNotificationAsRead(notificationId) {
+    fetch('/notifications/' + notificationId + '/mark-read', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+          var notificationItem = document.getElementById('notification-item-' + notificationId);
+            if (notificationItem) {
+                notificationItem.style.backgroundColor = '#f8f9fa'; // Example color
+
+                // Alternatively, hide the notification item
+                // notificationItem.style.display = 'none';
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+</script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

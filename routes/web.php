@@ -4,6 +4,9 @@ use App\Http\Controllers\ProfileController;
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/test-route', function () {
+    return 'This is a test route';
+});
 
 // Display all registered controllers
 
@@ -33,12 +36,20 @@ Route::get('/post/{post}/edit', [ProfileController::class, 'edit'])->name('post.
 Route::patch('/post/{post}', [ProfileController::class, 'update'])->name('post.update');
 Route::delete('/post/{post}', [ProfileController::class, 'destroy'])->name('post.destroy');
 Route::post('/like/{post}', [PostController::class, 'like'])->name('post.like');
+Route::get('/test-notification', [PostController::class, 'testNotification']);
+Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
+
 
 use App\Http\Controllers\CommentController;
 Route::post('/comment/{post}', [CommentController::class, 'store'])->name('comment.store');
 Route::get('/load-comments/{post}', [CommentController::class, 'loadComments']);
 Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
 Route::delete('/delete-comment/{comment}', [CommentController::class, 'destroy']);
+
+use App\Http\Controllers\NotificationController;
+Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead']);
+
+
 
 
 

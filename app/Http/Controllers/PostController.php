@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Models\Post;
 use App\Models\like;
+use App\Models\User;
+use App\Models\comment;
+use App\Models\notification;
+use App\Notifications\CommentPostedNotification;
 class PostController extends Controller
 {
     /**
@@ -149,6 +154,16 @@ private function determinePostType($content, $imagePath, $link)
             $like->post_id = $post->id;
             $like->reaction = 'like'; // or any default value
             $like->save();
+
+            // Create a notification if the post owner is not the liker
+            if ($post->user_id != $user->id) {
+                notification::create([
+                    'user_id' => $post->user_id, // Owner of the post
+                    'type' => 'like',
+                    'data' => json_encode(['message' => $user->name . ' liked your post']),
+                    'read' => false,
+                ]);
+            }
         }
 
             $likesCount = 0;
@@ -158,4 +173,9 @@ private function determinePostType($content, $imagePath, $link)
 
         return response()->json(['success' => true, 'likes' => $likesCount]);
         }
+
+
+
+
+    
 }
