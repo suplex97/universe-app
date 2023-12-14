@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HOME</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
-  
-</head>
+  </head>
   <body>
 
 
@@ -82,9 +80,37 @@
         return true; // All inputs are empty
     }
 </script>
+<style>
+    .profile-link {
+        color: black; /* Set link color to black */
+        text-decoration: none; /* Remove underline */
+    }
 
+    .profile-link:hover {
+        color: grey; /* Change color on hover */
+    }
+    .card-title a {
+        color: black; /* Set link color to black */
+        text-decoration: none; /* Remove underline */
+    }
+    
+    .card-title a:hover {
+        color: grey; /* Change color on hover */
+    }
+    
+    .card-title:after {
+        content: '';
+        display: block;
+        border-bottom: 1px solid #ccc; /* Adjust color as needed */
+        margin-top: 5px; /* Adjust spacing as needed */
+    }
+    </style>
 <div class="container col-md-4">
-    <h2 class="mb-4">Posts</h2>
+    <div class="container d-flex justify-content-center align-items-center mt-4">
+        <h5 class="text-dark font-weight-bold mb-4">
+          <span class="blockquote-footer">Read the latest articles and insights</span>
+      </div>
+      
 
     @foreach($posts as $post)
         <div class="card mb-4">
@@ -102,7 +128,7 @@
                         <strong><a href="{{ route('user.profile', ['user' => $post->user]) }}" class="profile-link">{{ $post->user->name }}</a></strong> {{ $post->content }}
                     @elseif($post->post_type === 'photo')
                         @if($post->image)
-                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
+                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded" style="margin-bottom: 10px;">
                         @endif
                     @elseif($post->post_type === 'link')
                         @if($post->link)
@@ -112,7 +138,7 @@
                         @endif
                     @elseif($post->post_type === 'image-text')
                         @if($post->image)
-                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
+                            <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded" style="margin-bottom: 10px;">
                         @endif
                         <strong><a href="{{ route('user.profile', ['user' => $post->user]) }}"class="profile-link">{{ $post->user->name }}</a></strong> {{ $post->content }}
                     @endif
@@ -216,7 +242,7 @@
                             commentDiv.classList.add('comment');
                             //var commentHtml = `<p>${comment.text}</p>`;
                             // Include user name and profile link in the comment HTML
-                            var commentHtml = `<p><strong><a href="/profile/${comment.userId}">${comment.userName}</a></strong>: ${comment.text}</p>`;
+                            var commentHtml = `<p><strong><a href="/profile/${comment.userId}" class="profile-link">${comment.userName} </a> </strong>: ${comment.text}</p>`;
 
                             // Check if the current user is an admin
                             if (isAdmin) { // 'isAdmin' should be a boolean variable set in your frontend
@@ -244,7 +270,7 @@
 
             function createCommentHTML(comment) {
 var commentHtml = `<div id="comment-${comment.id}" class="comment">
-    <p><strong><a href="/profile/${comment.userId}">${comment.userName}</a></strong>: ${comment.text}</p>`;
+    <p><strong><a href="/profile/${comment.userId}" class="profile-link">${comment.userName}</a></strong>: ${comment.text}</p>`;
 
 if (isAdmin) {
     commentHtml += `
@@ -289,7 +315,7 @@ return commentHtml;
             if (data.success) {
                 var commentSection = document.getElementById('comments-section');
                 var newComment = document.createElement('div');
-                newComment.innerHTML = '<strong><a href="/profile/' + data.userId + '">' + data.userName + '</a></strong>: ' + data.commentText;
+                newComment.innerHTML = '<strong><a class="profile-link" href="/profile/' + data.userId + '" >' + data.userName + '</a></strong>: ' + data.commentText;
                 commentSection.appendChild(newComment);
                 commentInput.value = ''; // Clear the input field
             }

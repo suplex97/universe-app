@@ -172,7 +172,7 @@ private function determinePostType($content, $imagePath, $link)
                     'data' => json_encode(['message' => $user->name . ' liked your post']),
                     'read' => false,
                 ]);
-            }
+            } 
 
             
         }
