@@ -20,20 +20,32 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <!-- Display post content -->
-                    <p>{{ $post->content }}</p>
+                    <div id="content-{{ $post->id }}">
+                        <p>{{ $post->content }}</p>
+                        <a href="javascript:void(0);" onclick="editPost({{ $post->id }})">Edit</a>
+                        <form action="{{ route('post.destroy', ['post' => $post]) }}" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
     
-                    <!-- Add update and delete buttons -->
-                    <a href="{{ route('post.edit', ['post' => $post]) }}">Edit</a>
-                    <form action="{{ route('post.destroy', ['post' => $post]) }}" method="post">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit">Delete</button>
-                    </form>
+                    <!-- Edit form (initially hidden) -->
+                    <div id="edit-form-{{ $post->id }}" style="display: none;">
+                        <form action="{{ route('post.update', $post) }}" method="post">
+                            @csrf
+                            @method('PUT')
+                            <textarea name="content">{{ $post->content }}</textarea>
+                            <button type="submit">Save</button>
+                            <button type="button" onclick="cancelEdit({{ $post->id }})">Cancel</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         @empty
             <p>No posts found for this user.</p>
         @endforelse
+        
         <div class="d-flex justify-content-center mt-4">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
@@ -57,6 +69,17 @@
 
     </div>
 
+    <script>
+        function editPost(postId) {
+            document.getElementById('content-' + postId).style.display = 'none';
+            document.getElementById('edit-form-' + postId).style.display = 'block';
+        }
+    
+        function cancelEdit(postId) {
+            document.getElementById('content-' + postId).style.display = 'block';
+            document.getElementById('edit-form-' + postId).style.display = 'none';
+        }
+    </script>
     
     
     @endsection

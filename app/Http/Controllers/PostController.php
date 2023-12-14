@@ -111,7 +111,7 @@ private function determinePostType($content, $imagePath, $link)
      */
     public function edit(string $id)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -120,27 +120,35 @@ private function determinePostType($content, $imagePath, $link)
     public function update(Request $request, string $id)
     {
         // Validation logic
-    $post->update([
-        'content' => $request->input('content'),
-        // Update other fields as needed
-    ]);
+        // Fetch the post using the provided ID
+        $post = Post::findOrFail($id);
 
-    return redirect()->route('user.profile', ['user' => auth()->user()]);
+        // Validate the request data
+        $validatedData = $request->validate([
+            'content' => 'required|string', // Add other validation rules as needed
+        ]);
+
+        // Update the post with validated data
+        $post->update($validatedData);
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Post updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
         $post->delete();
-    return redirect()->route('user.profile', ['user' => auth()->user()]);
+        return redirect()->back()->with('success', 'Post deleted successfully');
     }
 
 
 
     public function like(Request $request, Post $post)
     {
+        
         $user = auth()->user(); // Get the authenticated user
         $like = like::where('post_id', $post->id)->where('user_id', $user->id)->first();
         
@@ -164,6 +172,8 @@ private function determinePostType($content, $imagePath, $link)
                     'read' => false,
                 ]);
             }
+
+            
         }
 
             $likesCount = 0;
@@ -173,6 +183,7 @@ private function determinePostType($content, $imagePath, $link)
 
         return response()->json(['success' => true, 'likes' => $likesCount]);
         }
+        
 
 
 

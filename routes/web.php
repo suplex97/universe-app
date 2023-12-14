@@ -40,12 +40,18 @@ Route::get('/test-notification', [PostController::class, 'testNotification']);
 Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
 
 Route::get('/profile/{userId}', 'ProfileController@show');
+Route::get('/post/{post}/edit', [PostController::class, 'edit'])->name('post.edit');
+Route::put('/post/{post}', [PostController::class, 'update'])->name('post.update');
+Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
+
+
 
 use App\Http\Controllers\CommentController;
 Route::post('/comment/{post}', [CommentController::class, 'store'])->name('comment.store');
 Route::get('/load-comments/{post}', [CommentController::class, 'loadComments']);
 Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
 Route::delete('/delete-comment/{comment}', [CommentController::class, 'destroy']);
+
 
 use App\Http\Controllers\NotificationController;
 Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead']);

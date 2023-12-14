@@ -350,7 +350,7 @@ return commentHtml;
                 .catch(error => console.error('Error:', error));
             }
         }
-
+</script>
 
 <script>
     var isAdmin = @json(auth()->user()->isAdmin()); // Or the equivalent check for admin role
