@@ -1,0 +1,25 @@
+
+    .profile-link {
+        color: black; /* Set link color to black */
+        text-decoration: none; /* Remove underline */
+    }
+
+    .profile-link:hover {
+        color: grey; /* Change color on hover */
+    }
+    .card-title a {
+        color: black; /* Set link color to black */
+        text-decoration: none; /* Remove underline */
+    }
+    
+    .card-title a:hover {
+        color: grey; /* Change color on hover */
+    }
+    
+    .card-title:after {
+        content: '';
+        display: block;
+        border-bottom: 1px solid #ccc; /* Adjust color as needed */
+        margin-top: 5px; /* Adjust spacing as needed */
+    }
+ 

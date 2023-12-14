@@ -14,5 +14,6 @@ class WeatherController extends Controller
 
         // Pass the weather data to the view
         return view('weather.index', compact('weather'));
+        
     }
 }

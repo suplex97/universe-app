@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HOME</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  </head>
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+  
+</head>
   <body>
 
 
@@ -89,7 +91,7 @@
             <div class="card-body">
                 <h5 class="card-title">
                     @if($post->user)
-                        <a href="{{ route('user.profile', ['user' => $post->user]) }}">{{ $post->user->name }}</a>
+                        <a href="{{ route('user.profile', ['user' => $post->user]) }}" class="profile-link">{{ $post->user->name }}</a>
                     @else
                         User Not Found
                         @php dd($post->toArray()) @endphp
@@ -97,7 +99,7 @@
                 </h5>
                 <p class="card-text">
                     @if($post->post_type === 'text')
-                        <strong>Content:</strong> {{ $post->content }}
+                        <strong><a href="{{ route('user.profile', ['user' => $post->user]) }}" class="profile-link">{{ $post->user->name }}</a></strong> {{ $post->content }}
                     @elseif($post->post_type === 'photo')
                         @if($post->image)
                             <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
@@ -112,7 +114,7 @@
                         @if($post->image)
                             <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid rounded">
                         @endif
-                        <strong>Content:</strong> {{ $post->content }}
+                        <strong><a href="{{ route('user.profile', ['user' => $post->user]) }}"class="profile-link">{{ $post->user->name }}</a></strong> {{ $post->content }}
                     @endif
                 </p>
                 <p class="card-text">
@@ -214,7 +216,7 @@
                             commentDiv.classList.add('comment');
                             //var commentHtml = `<p>${comment.text}</p>`;
                             // Include user name and profile link in the comment HTML
-                            var commentHtml = `<p><strong><a href="/user/profile/${comment.userId}">${comment.userName}</a></strong>: ${comment.text}</p>`;
+                            var commentHtml = `<p><strong><a href="/profile/${comment.userId}">${comment.userName}</a></strong>: ${comment.text}</p>`;
 
                             // Check if the current user is an admin
                             if (isAdmin) { // 'isAdmin' should be a boolean variable set in your frontend
@@ -242,7 +244,7 @@
 
             function createCommentHTML(comment) {
 var commentHtml = `<div id="comment-${comment.id}" class="comment">
-    <p><strong><a href="/user/profile/${comment.userId}">${comment.userName}</a></strong>: ${comment.text}</p>`;
+    <p><strong><a href="/profile/${comment.userId}">${comment.userName}</a></strong>: ${comment.text}</p>`;
 
 if (isAdmin) {
     commentHtml += `
@@ -287,7 +289,7 @@ return commentHtml;
             if (data.success) {
                 var commentSection = document.getElementById('comments-section');
                 var newComment = document.createElement('div');
-                newComment.innerHTML = '<strong><a href="/user/profile/' + data.userId + '">' + data.userName + '</a></strong>: ' + data.commentText;
+                newComment.innerHTML = '<strong><a href="/profile/' + data.userId + '">' + data.userName + '</a></strong>: ' + data.commentText;
                 commentSection.appendChild(newComment);
                 commentInput.value = ''; // Clear the input field
             }

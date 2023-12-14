@@ -23,15 +23,15 @@ class WeatherService
         \Log::info('Weather API Response:', $response->json());
 
         if ($response->successful()) {
-            return $response->json();
+            $data = $response->json();
             if (!empty($data['weather'][0]['icon'])) {
                 
                 $iconCode = $data['weather'][0]['icon'];
-                dd($iconCode);
+                
             $data['weather_icon_url'] = "http://openweathermap.org/img/wn/$iconCode.png";
             
         }
-            
+        return $data;
 
         }
     

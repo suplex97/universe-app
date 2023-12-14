@@ -8,15 +8,38 @@
   <body>
 
     @if ($weather)
-    <div class="weather-info">
-        <h3>Weather in {{ $weather['name'] ?? 'Unknown location' }}</h3>
-        @if (isset($weather['weather_icon_url']))
-            <img src="{{ $weather['weather_icon_url'] }}" alt="Weather Icon" style="width: 50px; height: 50px;">
-        @endif
-        <p>Temperature: {{ $weather['main']['temp'] ?? 'N/A' }}°C</p>
-        <p>Description: {{ $weather['weather'][0]['description'] ?? 'No description' }}</p>
+    <div class="container mt-4">
+      <div class="card shadow">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h5 class="card-title font-weight-bold">Current Weather in London</h5>
+              <p class="card-text text-muted">Updated at: {{ date('h:i a', $weather['dt']) }}</p>
+            </div>
+            <div class="col-md-4 text-center">
+              <img src="{{ $weather['weather_icon_url'] }}" alt="Weather Icon" class="img-fluid" style="width: 80px; height: 80px;">
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="mt-3">
+            <p class="mb-2 font-weight-bold"><i class="fas fa-thermometer-half me-2 fa-lg"></i>{{ $weather['main']['temp'] }}°C</p>
+            <p class="mb-2 text-muted"><i class="fas fa-cloud me-2 fa-lg"></i>Humidity: {{ $weather['main']['humidity'] }}%</p>
+            <p class="mb-2 text-muted"><i class="fas fa-wind me-2 fa-lg"></i>Wind speed: {{ $weather['wind']['speed'] }} mph</p>
+            <p class="mb-0 text-muted"><i class="fas fa-tachometer-alt me-2 fa-lg"></i>Pressure: {{ $weather['main']['pressure'] }} hPa</p>
+            
+          </div>
+        </div>
+      </div>
     </div>
-@endif
+    @endif
+
+
+
+
+
+    
 
 
 
