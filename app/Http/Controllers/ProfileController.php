@@ -18,7 +18,7 @@ class ProfileController extends Controller
      */
     public function index(User $user)
     {
-        $posts = $user->posts;
+        $posts = $user->posts()->paginate(4); // Retrieve 4 posts per page
         return view('profile.index', compact('user', 'posts'));
     }
 
@@ -65,6 +65,14 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function show($userId)
+    {
+        $user = User::findOrFail($userId); // Find the user by their ID
+        $posts = $user->posts; // Assuming 'posts' is the relationship name in your User model
+
+        return view('profile.show', compact('user', 'posts'));
     }
 
 

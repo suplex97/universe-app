@@ -39,6 +39,7 @@ Route::post('/like/{post}', [PostController::class, 'like'])->name('post.like');
 Route::get('/test-notification', [PostController::class, 'testNotification']);
 Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
 
+Route::get('/profile/{userId}', 'ProfileController@show');
 
 use App\Http\Controllers\CommentController;
 Route::post('/comment/{post}', [CommentController::class, 'store'])->name('comment.store');
