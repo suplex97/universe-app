@@ -14,6 +14,12 @@
 @section('content')
 
 
+
+
+
+
+
+
 <div class="container">
     <div class="row justify-content-center">
         <button type="button" class="btn btn-light col-md-6 m-5" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="border-radius: 1.365rem;">

@@ -56,6 +56,9 @@ Route::delete('/delete-comment/{comment}', [CommentController::class, 'destroy']
 use App\Http\Controllers\NotificationController;
 Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead']);
 
+use App\Http\Controllers\WeatherController;
+Route::get('/weather', [WeatherController::class, 'index'])->name('weather.index');
+
 
 
 

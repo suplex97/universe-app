@@ -17,6 +17,7 @@ class PostController extends Controller
      */
     public function index()
     {
+        
         $posts = Post::latest()->get();
         return view('posts.index', compact('posts'));
         $posts = Post::with('likes')->get(); // Eager load likes
